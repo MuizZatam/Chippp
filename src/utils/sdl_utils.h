@@ -2,6 +2,8 @@
 # define SDL_INIT_UTILS
 
 # include <stdbool.h>
+
 bool init_sdl(void);
+void final_cleanup(void);
 
 # endif

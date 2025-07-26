@@ -5,10 +5,9 @@
 
 int main() {
 
-    if (!init_sdl()) {
+    if (!init_sdl()) exit(EXIT_FAILURE);
 
-        exit(EXIT_FAILURE);
-    }
+    final_cleanup();
     
     exit(EXIT_SUCCESS);
 }
