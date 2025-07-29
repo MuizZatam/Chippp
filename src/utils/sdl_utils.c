@@ -1,18 +1,14 @@
 #include "sdl_utils.h"
 #include "SDL2/SDL.h"
-#include <SDL2/SDL_events.h>
 #include <stdbool.h>
 
-
-// globals for config
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-int window_width = 700;
-int window_height = 600;
+// 64x32 pixels - scaled by 10
+int window_width = 640;
+int window_height = 320;
 SDL_Color COLOR_WHITE = {255, 255, 255, 255};
 SDL_Color COLOR_BLACK = {0, 0, 0, 255};
-
-
 
 bool init_sdl(void) {
 
@@ -47,8 +43,6 @@ bool init_sdl(void) {
   return true;
 }
 
-
-
 void final_cleanup() {
 
   SDL_DestroyRenderer(renderer);
@@ -56,17 +50,15 @@ void final_cleanup() {
   SDL_Quit();
 }
 
-
-
 bool handle_input() {
 
   SDL_Event event;
-  
+
   while (SDL_PollEvent(&event)) {
 
-    switch(event.type) {
-            case SDL_QUIT:
-            return false;
+    switch (event.type) {
+    case SDL_QUIT:
+      return false;
     }
   }
 
