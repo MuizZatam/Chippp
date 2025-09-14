@@ -26,7 +26,7 @@ const FONTSET: [u8; FONTSET_SIZE] = [
 ];
 
 pub struct Emu {
-    pc: u16,
+    program_counter: u16,
     ram: [u8; RAM_SIZE],
     screen: [bool; SCREEN_WIDTH * SCREEN_HEIGHT],
     v_registers: [u8; NUM_REGS],
@@ -41,7 +41,7 @@ pub struct Emu {
 impl Emu {
     pub fn new() -> Self {
         let mut new_emu = Self {
-            pc: START_ADDRESS,
+            program_counter: START_ADDRESS,
             ram: [0; RAM_SIZE],
             screen: [false; SCREEN_WIDTH * SCREEN_HEIGHT],
             v_registers: [0; NUM_REGS],
@@ -69,7 +69,7 @@ impl Emu {
     }
 
     pub fn reset(&mut self) {
-        self.pc = START_ADDRESS;
+        self.program_counter = START_ADDRESS;
         self.ram = [0; RAM_SIZE];
         self.screen = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
         self.v_registers = [0; NUM_REGS];
@@ -80,5 +80,22 @@ impl Emu {
         self.delay_timer = 0;
         self.sound_timer = 0;
         self.ram[..FONTSET_SIZE].copy_from_slice(&FONTSET);
+    }
+
+    pub fn tick(&mut self) {
+        // fetch
+        let operator = self.fetch();
+        // decode
+        // execute
+    }
+
+    fn fetch(&mut self) -> u16 {
+        let higher_byte = self.ram[self.program_counter as usize] as u16;
+        let lower_byte = self.ram[(self.program_counter + 1) as usize] as u16;
+
+        let operator = (higher_byte << 8) | lower_byte;
+        self.program_counter += 2;
+
+        operator
     }
 }
