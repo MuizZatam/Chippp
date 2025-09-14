@@ -67,4 +67,18 @@ impl Emu {
         self.stack_pointer -= 1;
         self.stack[self.stack_pointer as usize]
     }
+
+    pub fn reset(&mut self) {
+        self.pc = START_ADDRESS;
+        self.ram = [0; RAM_SIZE];
+        self.screen = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
+        self.v_registers = [0; NUM_REGS];
+        self.index_register = 0;
+        self.stack_pointer = 0;
+        self.stack = [0; STACK_SIZE];
+        self.keys = [false; NUM_KEYS];
+        self.delay_timer = 0;
+        self.sound_timer = 0;
+        self.ram[..FONTSET_SIZE].copy_from_slice(&FONTSET);
+    }
 }
