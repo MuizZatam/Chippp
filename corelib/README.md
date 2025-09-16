@@ -47,3 +47,27 @@ The following is an example of how a sprite for the fontset can be represented:
 | *  * | 1001 0000 | 0x90 |
 | *  * | 1001 0000 | 0x90 |
 | **** | 1111 0000 | 0xF0 |
+
+___
+
+## Emulation Methods
+
+**1. new**
+
+Returns the constructed object with all default values and loads default fontset sprites in the RAM
+
+**2. push and pop**
+
+Generic methods for pushing and popping to and from the stack
+
+**3. reset**
+
+Resets the emulation object to its default
+
+**4. tick**
+
+Emulates a tick - fetch, decode, execute (To be updated)
+
+**5. tick timers**
+
+Decrements the timers by one per tick, once zero, both timers remain to zero until a ROM explicitly resets them to a non-zero value
