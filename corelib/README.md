@@ -39,6 +39,11 @@ Since the first 512 bytes of the RAM are free, we can use this space to load thi
 
 The following is an example of how a sprite for the fontset can be represented:
 
-|          **"0"**         |                     **Binary**                    |          **Hex**         |
-|:------------------------:|:-------------------------------------------------:|:------------------------:|
-| **** *  * *  * *  * **** | 1111 0000 1001 0000 1001 0000 1001 0000 1111 0000 | 0xF0 0x90 0x90 0x90 0xF0 |
+
+| **"0"** | **Binary**   | **Hex**  |
+|:---:|:--------:|:----:|
+| **** | 1111 0000 | 0xF0 |
+| *  * | 1001 0000 | 0x90 |
+| *  * | 1001 0000 | 0x90 |
+| *  * | 1001 0000 | 0x90 |
+| **** | 1111 0000 | 0xF0 |
