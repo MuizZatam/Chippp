@@ -28,3 +28,17 @@ A 2 byte pointer to the next stack index where a value will be pushed (Technical
 **6. Index Register**
 
 The index register is used to access the RAM for read/write operations. Since the RAM is 4096 bytes long, we need a maximum of 12 bits to address all of them (2^12 = 4096). However, 12 is not a clean power of 2 and represents 1.5 bytes which is not cleanly workable by CPUs as those are built to work with multiples of bytes. Hence, we use 16 bits (or two bytes) to address the RAM.
+
+___
+
+## Fontset For CHIP8
+
+Most ROMs define fontsets to use in association. However, it is a good idea to implement a basic fontset for hexadecimal characters (0-9, A-F) for testing and development. The CHIP8 display treats a sprite as 5 pixels tall and 2 bytes (16 pixels) wide. It renders each scene line by line, pixel by pixel.
+
+Since the first 512 bytes of the RAM are free, we can use this space to load this fontset at the start. It will acquire 5 x 2 x 16 = 160 bytes.
+
+The following is an example of how a sprite for the fontset can be represented:
+
+|          **"0"**         |                     **Binary**                    |          **Hex**         |
+|:------------------------:|:-------------------------------------------------:|:------------------------:|
+| **** *  * *  * *  * **** | 1111 0000 1001 0000 1001 0000 1001 0000 1111 0000 | 0xF0 0x90 0x90 0x90 0xF0 |
