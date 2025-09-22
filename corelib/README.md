@@ -71,3 +71,52 @@ Emulates a tick - fetch, decode, execute (To be updated)
 **5. tick timers**
 
 Decrements the timers by one per tick, once zero, both timers remain to zero until a ROM explicitly resets them to a non-zero value
+
+___
+
+## Opcode Descriptions and Execution Logic
+
+1. Each opcode is two bytes long and is dealt as a sequence of 4, 4-bit long nibbles.
+2. Operands, if present, are specified within these two bytes. For example, 1NNN describes the Jump operand in which NNN is the address to which the jump is made.
+3. The X or Y wild card uses the value stored in VX/VY.
+4. N refers to a literal hexadecimal value.
+
+**i. 0000 - Nop**
+
+Does nothing, moves onto the next instruction
+
+logic:
+```rust
+return;
+```
+
+**ii. 00E0 - Clear Screen**
+
+Refreshes the screen, making all pixels false
+
+logic:
+```rust
+self.screen = [false; screen_width * screen_height;];
+```
+
+**iii. 00EE - Return from a subroutine**
+
+Fetches the return address by popping the stack and jumps to it
+
+logic:
+```rust
+return_address = self.pop();
+program_counter = return_address;
+```
+
+**iv. 1NNN - Jump to NNN**
+
+logic:
+```rust
+let nnn = operator & 0xFFF;
+// and-ing with all ones returns the 3 least significant nibbles. Since the first nibble of the operator
+// is just 0001, and-ing it with 0000 results in the nibble 0000, effectively just returning NNN
+self.program_counter = nnn;
+```
+
+****

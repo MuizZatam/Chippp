@@ -96,7 +96,7 @@ impl Emu {
         let nibble4 = operator & 0x000F;
 
         match (nibble1, nibble2, nibble3, nibble4) {
-            // NOP
+            // Nop
             (0, 0, 0, 0) => return,
 
             // CLS
