@@ -86,7 +86,72 @@ impl Emu {
         // fetch
         let operator = self.fetch();
         // decode
-        // execute
+        self.execute(operator);
+    }
+
+    pub fn execute(&mut self, operator: u16) {
+        let nibble1 = (operator & 0xF000) >> 12;
+        let nibble2 = (operator & 0x0F00) >> 8;
+        let nibble3 = (operator & 0x00F0) >> 4;
+        let nibble4 = operator & 0x000F;
+
+        match (nibble1, nibble2, nibble3, nibble4) {
+            // NOP
+            (0, 0, 0, 0) => return,
+
+            // CLS
+            (0, 0, 0xE, 0) => {
+                self.screen = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
+            }
+
+            // RET
+            (0, 0, 0xE, 0xE) => {
+                let return_address = self.pop();
+                self.program_counter = return_address;
+            }
+
+            // JMP NNN
+            (1, _, _, _) => {
+                let nnn = operator & 0xFFF;
+                self.program_counter = nnn;
+            }
+
+            // CALL NNN
+            (2, _, _, _) => {
+                let nnn = operator & 0xFFF;
+                self.push(self.program_counter);
+                self.program_counter = nnn;
+            }
+
+            // SKIP VX = NN
+            (3, _, _, _) => {
+                let x = nibble2 as usize;
+                let nn = (operator & 0xFF) as u8;
+                if self.v_registers[x] == nn {
+                    self.program_counter += 2;
+                }
+            }
+
+            // SKIP VX != NN
+            (4, _, _, _) => {
+                let x = nibble2 as usize;
+                let nn = (operator & 0xFF) as u8;
+                if self.v_registers[x] != nn {
+                    self.program_counter += 2;
+                }
+            }
+
+            // SKIP VX = VY
+            (5, _, _, _) => {
+                let x = nibble2 as usize;
+                let y = nibble3 as usize;
+                if self.v_registers[x] == self.v_registers[y] {
+                    self.program_counter += 2;
+                }
+            }
+
+            (_, _, _, _) => unimplemented!("Unimplemented opcode: {}", operator),
+        }
     }
 
     fn fetch(&mut self) -> u16 {
