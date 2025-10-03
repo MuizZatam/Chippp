@@ -79,4 +79,20 @@ impl Emulator {
         self.sound_timer = 0;
         self.ram[..FONTSET_SIZE].copy_from_slice(&FONTSET);
     }
+
+    pub fn tick(&mut self) {
+        // fetch
+        let operator = self.fetch();
+        // decode
+        // execute
+    }
+
+    fn fetch(&mut self) -> u16 {
+        let higher_byte = self.ram[self.program_counter as usize] as u16;
+        let lower_byte = self.ram[(self.program_counter + 1) as usize] as u16;
+
+        let opcode = (higher_byte << 8) | lower_byte;
+        self.program_counter += 2;
+        opcode
+    }
 }
