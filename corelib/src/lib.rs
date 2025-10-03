@@ -34,4 +34,14 @@ impl Emulator {
             sound_timer: 0,
         }
     }
+
+    fn push(&mut self, value: u16) {
+        self.stack[self.stack_pointer as usize] = value;
+        self.stack_pointer += 1;
+    }
+
+    fn pop(&mut self) -> u16 {
+        self.stack_pointer -= 1;
+        self.stack[self.stack_pointer as usize]
+    }
 }
