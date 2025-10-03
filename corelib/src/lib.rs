@@ -65,4 +65,18 @@ impl Emulator {
         self.stack_pointer -= 1;
         self.stack[self.stack_pointer as usize]
     }
+
+    pub fn reset(&mut self) {
+        self.program_counter = START_ADDRESS;
+        self.ram = [0; RAM_SIZE];
+        self.screen_buffer = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
+        self.v_registers = [0; NUM_REGISTERS];
+        self.index_register = 0;
+        self.stack = [0; STACK_SIZE];
+        self.stack_pointer = 0;
+        self.keys = [false; NUM_KEYS];
+        self.delay_timer = 0;
+        self.sound_timer = 0;
+        self.ram[..FONTSET_SIZE].copy_from_slice(&FONTSET);
+    }
 }
