@@ -104,6 +104,28 @@ impl Emulator {
         let digit4 = opcode & 0x000F;
 
         match (digit1, digit2, digit3, digit4) {
+            // NOP (0000) - Does nothing, returns
+            // Not described in CHIP8 standard but needed for timings and alignments
+            (0, 0, 0, 0) => return,
+
+            // CLS (00E0) - Clears the Screen Buffer
+            // CHIP8 clears the screen every frame and redraws sprites line by line
+            (0, 0, 0xE, 0) => {
+                self.screen_buffer = [false; SCREEN_WIDTH * SCREEN_HEIGHT];
+            }
+
+            // RET (00EE) - Returns from a subroutine
+            // Behaves like a normal return from a function
+            // This returns control flow to the entry point from which the subroutine was called
+            // Achieved by pushing the current value of program counter to the stack before entering a subroutine
+            // It is expected that during the execution of the called subroutine, the program counter updates as usual
+            // Once the subroutine finishes execution, the value from the stack is popped and re-assigned to the
+            // program counter to resume control flow from where the subroutine was called
+            (0, 0, 0xE, 0xE) => {
+                let return_address = self.pop();
+                self.program_counter = return_address;
+            }
+
             (_, _, _, _) => unimplemented!("Unimplemented Opcode: {opcode}"),
         }
     }
