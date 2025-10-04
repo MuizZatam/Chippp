@@ -82,9 +82,10 @@ impl Emulator {
 
     pub fn tick(&mut self) {
         // fetch
-        let operator = self.fetch();
+        let opcode = self.fetch();
         // decode
         // execute
+        self.execute(opcode);
     }
 
     fn fetch(&mut self) -> u16 {
@@ -94,6 +95,17 @@ impl Emulator {
         let opcode = (higher_byte << 8) | lower_byte;
         self.program_counter += 2;
         opcode
+    }
+
+    fn execute(&mut self, opcode: u16) {
+        let digit1 = (opcode & 0xF000) >> 12;
+        let digit2 = (opcode & 0x0F00) >> 8;
+        let digit3 = (opcode & 0x00F0) >> 4;
+        let digit4 = opcode & 0x000F;
+
+        match (digit1, digit2, digit3, digit4) {
+            (_, _, _, _) => unimplemented!("Unimplemented Opcode: {opcode}"),
+        }
     }
 
     pub fn tick_timer(&mut self) {
