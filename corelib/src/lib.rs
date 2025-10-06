@@ -167,6 +167,29 @@ impl Emulator {
                 }
             }
 
+            // SET VX = NN - Sets the value of VX to NN
+            (6, _, _, _) => {
+                let x = digit2 as usize;
+                let nn = (opcode & 0xFF) as u8;
+                self.v_registers[x] = nn;
+            }
+
+            // INCREMENT VX, NN - Adds NN to VX
+            (7, _, _, _) => {
+                let x = digit2 as usize;
+                let nn = (opcode & 0xFF) as u8;
+                // Use wrapping addition to prevent panic due to overflow
+                // It is expected that ROMs won't let this situation arise
+                self.v_registers[x] = self.v_registers[x].wrapping_add(nn);
+            }
+
+            // SET VX = VY - Sets the value of VX to be that of VY
+            (8, _, _, 0) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+                self.v_registers[x] = self.v_registers[y];
+            }
+
             (_, _, _, _) => unimplemented!("Unimplemented Opcode: {opcode}"),
         }
     }
