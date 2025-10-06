@@ -126,6 +126,47 @@ impl Emulator {
                 self.program_counter = return_address;
             }
 
+            // JMP NNN (1NNN) - Jumps to address NNN
+            // Shifts the program counter to NNN
+            (1, _, _, _) => {
+                let nnn = opcode & 0xFFF;
+                self.program_counter = nnn;
+            }
+
+            // CALL NNN (2NNN) - Calls subroutine at NNN
+            (2, _, _, _) => {
+                let nnn = opcode & 0xFFF;
+                self.push(self.program_counter);
+                self.program_counter = nnn;
+            }
+
+            // SKIP VX == NN (3XNN) - Skips next instruction if VX is equal to NN
+            (3, _, _, _) => {
+                let x = digit2 as usize;
+                let nn = (opcode & 0xFF) as u8;
+                if self.v_registers[x] == nn {
+                    self.program_counter += 2;
+                }
+            }
+
+            // SKIP VX != NN (4XNN) - Skips next instruction if VX is not equal to NN
+            (4, _, _, _) => {
+                let x = digit2 as usize;
+                let nn = (opcode & 0xFF) as u8;
+                if self.v_registers[x] != nn {
+                    self.program_counter += 2;
+                }
+            }
+
+            // SKIP VX == VY (5XY0) - Skips next instruction if VX is equal to VY
+            (5, _, _, 0) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+                if self.v_registers[x] == self.v_registers[y] {
+                    self.program_counter += 2;
+                }
+            }
+
             (_, _, _, _) => unimplemented!("Unimplemented Opcode: {opcode}"),
         }
     }
