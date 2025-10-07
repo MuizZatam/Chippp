@@ -167,14 +167,14 @@ impl Emulator {
                 }
             }
 
-            // SET VX = NN - Sets the value of VX to NN
+            // SET VX = NN (6XNN) - Sets the value of VX to NN
             (6, _, _, _) => {
                 let x = digit2 as usize;
                 let nn = (opcode & 0xFF) as u8;
                 self.v_registers[x] = nn;
             }
 
-            // INCREMENT VX, NN - Adds NN to VX
+            // INCREMENT VX, NN (7XNN) - Adds NN to VX
             (7, _, _, _) => {
                 let x = digit2 as usize;
                 let nn = (opcode & 0xFF) as u8;
@@ -183,11 +183,32 @@ impl Emulator {
                 self.v_registers[x] = self.v_registers[x].wrapping_add(nn);
             }
 
-            // SET VX = VY - Sets the value of VX to be that of VY
+            // SET VX = VY (8XY0) - Sets the value of VX to be that of VY
             (8, _, _, 0) => {
                 let x = digit2 as usize;
                 let y = digit3 as usize;
                 self.v_registers[x] = self.v_registers[y];
+            }
+
+            // Set VX |= VY (8XY1)
+            (8, _, _, 1) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+                self.v_registers[x] |= self.v_registers[y];
+            }
+
+            // Set VX &= VY (8XY2)
+            (8, _, _, 2) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+                self.v_registers[x] &= self.v_registers[y];
+            }
+
+            // Set VX ^= VY (8XY3)
+            (8, _, _, 3) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+                self.v_registers[x] ^= self.v_registers[y];
             }
 
             (_, _, _, _) => unimplemented!("Unimplemented Opcode: {opcode}"),
