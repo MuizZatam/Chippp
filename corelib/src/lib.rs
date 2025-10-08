@@ -190,25 +190,48 @@ impl Emulator {
                 self.v_registers[x] = self.v_registers[y];
             }
 
-            // Set VX |= VY (8XY1)
+            // SET VX |= VY (8XY1)
             (8, _, _, 1) => {
                 let x = digit2 as usize;
                 let y = digit3 as usize;
                 self.v_registers[x] |= self.v_registers[y];
             }
 
-            // Set VX &= VY (8XY2)
+            // SET VX &= VY (8XY2)
             (8, _, _, 2) => {
                 let x = digit2 as usize;
                 let y = digit3 as usize;
                 self.v_registers[x] &= self.v_registers[y];
             }
 
-            // Set VX ^= VY (8XY3)
+            // SET VX ^= VY (8XY3)
             (8, _, _, 3) => {
                 let x = digit2 as usize;
                 let y = digit3 as usize;
                 self.v_registers[x] ^= self.v_registers[y];
+            }
+
+            // SET VX += VY (8XY4)
+            (8, _, _, 4) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+
+                // In this operation, owerflow is probable
+                // Hence, we update VF with the appropriate carry flag
+                let (new_vx, carry) = self.v_registers[x].overflowing_add(self.v_registers[y]);
+                let new_vf = if carry { 1 } else { 0 };
+                self.v_registers[x] = new_vx;
+                self.v_registers[0xF] = new_vf;
+            }
+
+            // SET VX -= VY (8XY5)
+            (8, _, _, 5) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+                let (new_vx, borrow) = self.v_registers[x].overflowing_sub(self.v_registers[y]);
+                let new_vf = if borrow { 0 } else { 1 };
+                self.v_registers[x] = new_vx;
+                self.v_registers[0xF] = new_vf;
             }
 
             (_, _, _, _) => unimplemented!("Unimplemented Opcode: {opcode}"),
