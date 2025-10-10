@@ -234,6 +234,24 @@ impl Emulator {
                 self.v_registers[0xF] = new_vf;
             }
 
+            // SET VX >>= 1 (8XY6)
+            (8, _, _, 6) => {
+                let x = digit2 as usize;
+                let lsb = self.v_registers[x] & 1;
+                self.v_registers[x] >>= 1;
+                self.v_registers[0xF] = lsb;
+            }
+
+            // SET VX = VY - VX (8XY7)
+            (8, _, _, 7) => {
+                let x = digit2 as usize;
+                let y = digit3 as usize;
+                let (new_vx, borrow) = self.v_registers[y].overflowing_sub(self.v_registers[x]);
+                let new_vf = if borrow { 0 } else { 1 };
+                self.v_registers[x] = new_vx;
+                self.v_registers[0xF] = new_vf;
+            }
+
             (_, _, _, _) => unimplemented!("Unimplemented Opcode: {opcode}"),
         }
     }
